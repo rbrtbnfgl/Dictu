@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="auto">
+<head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#00add8">
+<link rel="stylesheet" href="/styles.css">
+  
+
+
+<title>Dictu</title>
+
+</head>
+<body class="Site">
+  
+
+<header class="site-header">
+  <div class="site-logo">
+  </div>
+</header>
+<div class="NavigationDrawer-scrim js-scrim" role="presentation"></div>
+<main class="SiteContent SiteContent--default">
+  
+
+ 
+
+<div class="PlayPage">
+  <div class="Playground-controls">
+    <div class="Playground-buttons">
+    <button id="run" class="Button" title="Run this code">Run</button>
+    </div>
+  </div>
+  <div class="Playground-inputContainer">
+   <div id="wrap">
+    <div style="height: 100%; overflow: hidden;">
+    <div class="line-numbers" style="width: 3%; margin-top: 0px; display: inline-block;"><div></div></div>
+	    <textarea id="code" name="code" class="Playground-input" autocorrect="off" autocomplete="off" autocapitalize="off" spellcheck="false" style="width: 97%;" >// You can edit this code!
+// Click here and start typing.
+print("Hello, World!");
+    </textarea>
+    </div>
+   </div>
+  </div>
+  <div class="Playground-outputContainer">
+    <pre id="output" class="Playground-output">Hello, World!</pre>
+  </div>
+
+</div>
+
+
+</main>
+<footer class="site-footer">
+<script>
+const buttonRun = document.getElementById("run")
+buttonRun.addEventListener("click", event => {
+   event.target.disabled = true
+   const outputArea = document.getElementById("output")
+   outputArea.innerHTML = "Executing script..."
+   const asyncPostCall = async () => {
+      code = document.getElementById('code').value
+      const settings = {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+          },
+	  body: code
+      }
+      try {
+          const fetchResponse = await fetch(`/`, settings)
+	  if (fetchResponse?.ok) {
+             outputArea.innerHTML = await fetchResponse.text()
+          } else {
+             outputArea.innerHTML = `HTTP Response Code: ${fetchResponse?.status}`
+          }
+          event.target.disabled = false
+      } catch (e) {
+          outputArea.innerHTML = e.toString()
+          event.target.disabled = false
+      }
+   }
+   asyncPostCall()
+})
+
+const textarea = document.getElementById('code')
+const lineNumbers = document.querySelector('.line-numbers')
+numberOfLines = textarea.value.split('\n').length
+
+lineNumbers.innerHTML = Array(numberOfLines)
+   .fill('<div></div>')
+   .join('')
+
+textarea.addEventListener('keyup', event => {
+  const numberOfLines = event.target.value.split('\n').length
+
+  lineNumbers.innerHTML = Array(numberOfLines)
+    .fill('<div></div>')
+    .join('')
+})
+</script>
+</footer>
+</body>
+</html>
